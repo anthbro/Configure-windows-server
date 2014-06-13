@@ -159,6 +159,27 @@ switch ($Answer){
     1 {	Write-Host "You selected No, Skipping" -ForegroundColor Green; break}     
 }
 
+$caption = "";
+$message = "Do you want to set up the explorer folder options?)";
+$yes = new-Object System.Management.Automation.Host.ChoiceDescription "&Yes","help";
+$no = new-Object System.Management.Automation.Host.ChoiceDescription "&No","help";
+$choices = [System.Management.Automation.Host.ChoiceDescription[]]($yes,$no);
+$Answer = $host.ui.PromptForChoice($caption,$message,$Choices,0)
+
+switch ($Answer){
+
+    0 {
+		$key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
+		Set-ItemProperty $key Hidden 1
+		Set-ItemProperty $key HideFileExt 0
+		Set-ItemProperty $key ShowSuperHidden 1
+		Stop-Process -processname explorer		
+		Write-Host "Folder options are now set" -ForegroundColor Green; 
+		break
+		}
+    1 {	Write-Host "You selected No, Skipping" -ForegroundColor Green; break}     
+}
+
 
 #disable ipv6 manually, this will open the network connections
 Write-Host "Disable IP v6, if you require, press any key to open the network connections screen"
