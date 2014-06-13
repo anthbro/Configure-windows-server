@@ -40,4 +40,14 @@ netsh advfirewall set privateprofile state off
 #Set-NetFirewall -Profile public -Enabled $false
 # can use a , between profiles or a * for all profiles
 
+Set google as default search engine
+New-Item -Path "HKCU:\Software\Microsoft\Internet Explorer\SearchScopes" -Name "{E654518E-3688-45C9-A3F3-0FD51CADB782}" -Force 
+New-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\SearchScopes" -Name DefaultScope -PropertyType String -Value "{E654518E-3688-45C9-A3F3-0FD51CADB782}" -Force
+New-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\SearchScopes\{E654518E-3688-45C9-A3F3-0FD51CADB782}" -Name DisplayName -PropertyType String -Value "Google" -Force
+New-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\SearchScopes\{E654518E-3688-45C9-A3F3-0FD51CADB782}" -Name URL -PropertyType String -Value "http://www.google.com/search?q={searchTerms}&sourceid=ie7&rls=com.microsoft:{language}:{referrer:source}&ie={inputEncoding?}&oe={outputEncoding?}" -Force
+New-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\SearchScopes\{E654518E-3688-45C9-A3F3-0FD51CADB782}" -Name ShowSearchSuggestions -PropertyType Binary -Value 1 -Force
+New-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\SearchScopes\{E654518E-3688-45C9-A3F3-0FD51CADB782}" -Name SuggestionsURL -PropertyType String -Value "http://clients5.google.com/complete/search?q={searchTerms}&client=ie8&mw={ie:maxWidth}&sh={ie:sectionHeight}&rh={ie:rowHeight}&inputencoding={inputEncoding}&outputencoding={outputEncoding}" -Force
+New-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\SearchScopes\{E654518E-3688-45C9-A3F3-0FD51CADB782}" -Name OSDFileURL -PropertyType String -Value "http://www.iegallery.com/en-us/AddOns/DownloadAddOn?resourceId=813" -Force
+New-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\SearchScopes\{E654518E-3688-45C9-A3F3-0FD51CADB782}" -Name FaviconURL -PropertyType String -Value "http://www.google.com/favicon.ico" -Force
+New-ItemProperty -Path "HKCU:\Software\Microsoft\Internet Explorer\SearchScopes\{E654518E-3688-45C9-A3F3-0FD51CADB782}" -Name FaviconPath -PropertyType String -Value "C:\Users\Administrator\AppData\LocalLow\Microsoft\Internet Explorer\Services\search_{E654518E-3688-45C9-A3F3-0FD51CADB782}.ico" -Force
 
