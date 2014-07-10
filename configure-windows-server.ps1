@@ -1,3 +1,5 @@
+Import-Module ServerManager
+
 $caption = "";
 $message = "Do you want to set the execution policy";
 $yes = new-Object System.Management.Automation.Host.ChoiceDescription "&Yes","help";
@@ -38,26 +40,6 @@ switch ($Answer){
 		Write-Host "You selected No, Skipping" -ForegroundColor Green; break}     
 }
 
-$caption = "";
-$message = "Do you want to disable IE Enhanced Security Configuration (ESC)";
-$yes = new-Object System.Management.Automation.Host.ChoiceDescription "&Yes","help";
-$no = new-Object System.Management.Automation.Host.ChoiceDescription "&No","help";
-$choices = [System.Management.Automation.Host.ChoiceDescription[]]($yes,$no);
-$Answer = $host.ui.PromptForChoice($caption,$message,$Choices,0)
-
-switch ($Answer){
-
-    0 {
-		$AdminKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}"
-		$UserKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}"
-		Set-ItemProperty -Path $AdminKey -Name "IsInstalled" -Value 0
-		Set-ItemProperty -Path $UserKey -Name "IsInstalled" -Value 0
-		Stop-Process -Name Explorer
-		Write-Host "IE Enhanced Security Configuration (ESC) has been disabled." -ForegroundColor Green
-		break}
-    1 {
-		Write-Host "You selected No, Skipping" -ForegroundColor Green; break}     
-}
 
 #disable ipv6, this only works with 2012 so is commented out for regular 2008 r2 use  ***untested
 #get-netadapterbinding | set-NetAdapterBinding -ComponentID ms_tcpip6 -Enabled $false
@@ -93,6 +75,7 @@ switch ($Answer){
 
     0 {
 		#install ad admin tools
+		
 		Add-WindowsFeature RSAT-DNS-Server -restartAdd-WindowsFeature RSAT-ADDS-Tools -restart
 		Add-WindowsFeature RSAT-AD-AdminCenter -restart
 		Add-WindowsFeature RSAT-SNIS -restart
@@ -183,5 +166,5 @@ switch ($Answer){
 
 #disable ipv6 manually, this will open the network connections
 Write-Host "Disable IP v6, if you require, press any key to open the network connections screen"
-$x = $host.UI.RawUI.ReadKey("NoEcho.IncludeKeydown")
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeydown")
 ncpa.cpl
