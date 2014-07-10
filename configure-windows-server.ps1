@@ -1,12 +1,5 @@
 Import-Module ServerManager
 
-$caption = "";
-$message = "Do you want to set the execution policy";
-$yes = new-Object System.Management.Automation.Host.ChoiceDescription "&Yes","help";
-$no = new-Object System.Management.Automation.Host.ChoiceDescription "&No","help";
-$choices = [System.Management.Automation.Host.ChoiceDescription[]]($yes,$no);
-$Answer = $host.ui.PromptForChoice($caption,$message,$Choices,0)
-
 switch ($Answer){
 
     0 {
@@ -33,7 +26,7 @@ switch ($Answer){
 		$UserKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}"
 		Set-ItemProperty -Path $AdminKey -Name "IsInstalled" -Value 0
 		Set-ItemProperty -Path $UserKey -Name "IsInstalled" -Value 0
-		Stop-Process -Name Explorer
+		
 		Write-Host "IE Enhanced Security Configuration (ESC) has been disabled." -ForegroundColor Green
 		break}
     1 {
@@ -56,7 +49,6 @@ switch ($Answer){
     0 {
 		#enable remote desktop 
 		set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
-		Stop-Process -Name Explorer
 		Write-Host "RDP has been enabled." -ForegroundColor Green
 		break
 		}
@@ -76,9 +68,9 @@ switch ($Answer){
     0 {
 		#install ad admin tools
 		
-		Add-WindowsFeature RSAT-DNS-Server -restartAdd-WindowsFeature RSAT-ADDS-Tools -restart
-		Add-WindowsFeature RSAT-AD-AdminCenter -restart
-		Add-WindowsFeature RSAT-SNIS -restart
+		Add-WindowsFeature RSAT-DNS-Server 
+		Add-WindowsFeature RSAT-ADDS-Tools 
+		Add-WindowsFeature RSAT-AD-AdminCenter 
 		Write-Host "Active Directory Tools have been installed" -ForegroundColor Green
 		break
 		}
@@ -156,15 +148,41 @@ switch ($Answer){
 		Set-ItemProperty $key Hidden 1
 		Set-ItemProperty $key HideFileExt 0
 		Set-ItemProperty $key ShowSuperHidden 1
-		Stop-Process -processname explorer		
 		Write-Host "Folder options are now set" -ForegroundColor Green; 
+		Write-Host ""
+		Write-Host ""
+			
 		break
 		}
     1 {	Write-Host "You selected No, Skipping" -ForegroundColor Green; break}     
 }
 
+$caption = "";
+$message = "Do you want to download and install notepad++?)";
+$yes = new-Object System.Management.Automation.Host.ChoiceDescription "&Yes","help";
+$no = new-Object System.Management.Automation.Host.ChoiceDescription "&No","help";
+$choices = [System.Management.Automation.Host.ChoiceDescription[]]($yes,$no);
+$Answer = $host.ui.PromptForChoice($caption,$message,$Choices,0)
+
+switch ($Answer){
+
+    0 {
+		$source = "http://download.tuxfamily.org/notepadplus/6.6.7/npp.6.6.7.Installer.exe"
+		$destination = "c:\install\npp.6.6.7.Installer.exe"
+		$wc = New-Object System.Net.WebClient
+		$wc.DownloadFile($source, $destination)
+		& 'c:\install\npp.6.6.7.Installer.exe' /S
+		Write-Host "Folder options are now set" -ForegroundColor Green; 
+		Write-Host ""
+				break
+		}
+    1 {	Write-Host "You selected No, Skipping" -ForegroundColor Green; break}     
+}
 
 #disable ipv6 manually, this will open the network connections
 Write-Host "Disable IP v6, if you require, press any key to open the network connections screen"
 $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeydown")
 ncpa.cpl
+
+#stop the explorer process to allow reg changes to take effect
+Stop-Process -Name Explorer
